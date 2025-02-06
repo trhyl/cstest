@@ -176,25 +176,70 @@
         }
 
         // 添加触控按钮控制
-        document.querySelector('.up').addEventListener('click', () => {
+        let buttonInterval;
+        const BUTTON_REPEAT_DELAY = 80; // 按钮重复触发的间隔时间（毫秒）
+
+        function setupButton(selector, action) {
+            const button = document.querySelector(selector);
+            
+            // 触摸开始
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                action(); // 立即执行一次
+                buttonInterval = setInterval(action, BUTTON_REPEAT_DELAY); // 持续执行
+            });
+            
+            // 鼠标按下
+            button.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                action(); // 立即执行一次
+                buttonInterval = setInterval(action, BUTTON_REPEAT_DELAY); // 持续执行
+            });
+            
+            // 触摸结束和鼠标松开时清除定时器
+            const clearButtonInterval = () => {
+                if (buttonInterval) {
+                    clearInterval(buttonInterval);
+                    buttonInterval = null;
+                }
+            };
+            
+            button.addEventListener('touchend', clearButtonInterval);
+            button.addEventListener('touchcancel', clearButtonInterval);
+            button.addEventListener('mouseup', clearButtonInterval);
+            button.addEventListener('mouseleave', clearButtonInterval);
+        }
+
+        // 设置各个方向按钮
+        setupButton('.up', () => {
             if (dy === 0) { dx = 0; dy = -1; }
         });
-        document.querySelector('.down').addEventListener('click', () => {
+
+        setupButton('.down', () => {
             if (dy === 0) { dx = 0; dy = 1; }
         });
-        document.querySelector('.left').addEventListener('click', () => {
+
+        setupButton('.left', () => {
             if (dx === 0) { dx = -1; dy = 0; }
         });
-        document.querySelector('.right').addEventListener('click', () => {
+
+        setupButton('.right', () => {
             if (dx === 0) { dx = 1; dy = 0; }
         });
 
-        // 防止按钮触发页面滚动
-        document.querySelectorAll('.control-btn').forEach(btn => {
-            btn.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-            });
-        });
+        // 优化按钮样式
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            .control-btn {
+                -webkit-tap-highlight-color: transparent;
+                transition: transform 0.1s;
+            }
+            .control-btn:active {
+                transform: scale(0.95);
+                background: #34495e;
+            }
+        `;
+        document.head.appendChild(styleSheet);
 
         function drawGame() {
             // 确保在每次绘制前清除整个画布
