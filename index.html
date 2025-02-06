@@ -49,11 +49,8 @@
             grid-template-rows: repeat(3, 70px);
             gap: 5px;
             width: fit-content;
-            margin: 20px auto 0;
-            grid-template-areas: 
-                ". up ."
-                "left . right"
-                ". down .";
+            position: absolute;
+            bottom: 0;
         }
         .control-btn {
             background: #2c3e50;
@@ -79,22 +76,12 @@
         }
         /* 右手模式（默认） */
         .control-buttons.right-handed {
-            position: absolute;
             right: 0;
-            grid-template-areas: 
-                ". up ."
-                "left . right"
-                ". down .";
         }
         
         /* 左手模式 */
         .control-buttons.left-handed {
-            position: absolute;
             left: 0;
-            grid-template-areas: 
-                ". up ."
-                "left . right"
-                ". down .";
         }
 
         .control-btn.up { grid-area: up; }
@@ -104,7 +91,8 @@
 
         @media (max-width: 500px) {
             .controls-container {
-                width: 320px;  /* 与移动端游戏画布宽度相同 */
+                width: 320px;
+                height: 190px;  /* 移动端稍微减小高度 */
             }
             .control-buttons {
                 grid-template-columns: repeat(3, 60px);
@@ -116,6 +104,22 @@
                 width: 60px;
                 height: 60px;
                 font-size: 24px;
+            }
+
+            .layout-switch {
+                margin: 0 auto 5px;
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .speed-control {
+                margin-left: 10px;
+                gap: 4px;
+            }
+
+            .speed-btn, .slow-btn {
+                padding: 4px 8px;
+                font-size: 12px;
             }
         }
 
@@ -156,7 +160,7 @@
         /* 修改开关按钮样式和速度控制样式 */
         .layout-switch {
             position: relative;
-            margin: 10px auto;
+            margin: 0 auto 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -251,8 +255,9 @@
         /* 添加一个容器来控制按钮组的位置 */
         .controls-container {
             width: 320px;  /* 与游戏画布宽度相同 */
-            margin: 0 auto;
+            margin: 10px auto;
             position: relative;
+            height: 220px;  /* 为操作按钮预留足够空间 */
         }
     </style>
 </head>
