@@ -20,7 +20,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            margin: 20px;
         }
         #gameCanvas {
             border: 3px solid #2c3e50;
@@ -90,24 +90,35 @@
         .control-btn.right { grid-area: right; }
 
         @media (max-width: 500px) {
-            .controls-container {
-                width: 320px;
-                height: 190px;  /* 移动端稍微减小高度 */
+            .game-container {
+                padding: 10px;
+                margin: 10px;
             }
+
+            #gameCanvas {
+                width: 280px;  /* 更小的游戏区域 */
+                height: 280px;
+            }
+
+            .controls-container {
+                height: 180px;
+            }
+
             .control-buttons {
-                grid-template-columns: repeat(3, 60px);
-                grid-template-rows: repeat(3, 60px);
+                grid-template-columns: repeat(3, 50px);
+                grid-template-rows: repeat(3, 50px);
                 gap: 8px;
             }
             
             .control-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+                border-radius: 10px;
             }
 
             .layout-switch {
-                margin: 0 auto 5px;
+                margin: 0 10px 5px;
                 padding: 8px;
                 font-size: 14px;
             }
@@ -160,7 +171,7 @@
         /* 修改开关按钮样式和速度控制样式 */
         .layout-switch {
             position: relative;
-            margin: 0 auto 10px;
+            margin: 0 20px 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -171,7 +182,7 @@
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            width: fit-content;
+            width: auto;
         }
         
         .switch {
@@ -254,10 +265,10 @@
 
         /* 添加一个容器来控制按钮组的位置 */
         .controls-container {
-            width: 320px;  /* 与游戏画布宽度相同 */
-            margin: 10px auto;
+            width: calc(100% - 40px); /* 左右各留20px边距 */
+            margin: 10px 20px;
             position: relative;
-            height: 220px;  /* 为操作按钮预留足够空间 */
+            height: 200px;
         }
     </style>
 </head>
