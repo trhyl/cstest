@@ -14,7 +14,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
             flex-direction: column;
-            padding: 30px;
+            padding: 10px;
             box-sizing: border-box;
         }
         .game-container {
@@ -24,12 +24,14 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             margin-bottom: 20px;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             box-sizing: border-box;
         }
         #gameCanvas {
             border: 3px solid #2c3e50;
             border-radius: 5px;
+            width: 300px;
+            height: 300px;
         }
         .score {
             font-size: 24px;
@@ -50,8 +52,8 @@
         }
         .control-buttons {
             display: grid;
-            grid-template-columns: repeat(3, 70px);
-            grid-template-rows: repeat(3, 70px);
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
             gap: 5px;
             width: fit-content;
             position: absolute;
@@ -66,7 +68,7 @@
             color: white;
             border: none;
             border-radius: 15px;
-            font-size: 28px;
+            font-size: 24px;
             cursor: pointer;
             touch-action: manipulation;
             display: flex;
@@ -74,8 +76,8 @@
             justify-content: center;
             user-select: none;
             -webkit-user-select: none;
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .control-btn:active {
@@ -106,16 +108,17 @@
             .game-container {
                 padding: 10px;
                 margin-bottom: 15px;
+                max-width: 300px;
             }
 
             #gameCanvas {
-                width: 280px;  /* 更小的游戏区域 */
+                width: 280px;
                 height: 280px;
             }
 
             .controls-container {
                 height: 180px;
-                max-width: 280px;
+                max-width: 300px;
             }
 
             .control-buttons {
@@ -135,7 +138,7 @@
                 margin: 0 0 10px;
                 padding: 8px;
                 font-size: 14px;
-                max-width: 280px;
+                max-width: 300px;
             }
 
             .speed-control {
@@ -198,7 +201,7 @@
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             width: auto;
-            max-width: 320px;
+            max-width: 340px;
         }
         
         .switch {
@@ -282,9 +285,9 @@
         /* 添加一个容器来控制按钮组的位置 */
         .controls-container {
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             position: relative;
-            height: 200px;
+            height: 190px;
             margin: 0 auto;
         }
     </style>
