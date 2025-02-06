@@ -31,6 +31,12 @@
             color: #2c3e50;
             margin-bottom: 15px;
             text-align: center;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .high-score {
+            color: #e74c3c;
         }
         .controls {
             text-align: center;
@@ -39,18 +45,22 @@
         }
         .control-buttons {
             display: grid;
-            grid-template-columns: repeat(3, 60px);
-            grid-template-rows: repeat(3, 60px);
+            grid-template-columns: repeat(3, 70px);
+            grid-template-rows: repeat(3, 70px);
             gap: 5px;
-            justify-content: center;
-            margin-top: 20px;
+            width: fit-content;
+            margin: 20px auto 0;
+            grid-template-areas: 
+                ". up ."
+                "left . right"
+                ". down .";
         }
         .control-btn {
             background: #2c3e50;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 24px;
+            border-radius: 15px;
+            font-size: 28px;
             cursor: pointer;
             touch-action: manipulation;
             display: flex;
@@ -58,22 +68,54 @@
             justify-content: center;
             user-select: none;
             -webkit-user-select: none;
+            width: 70px;
+            height: 70px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .control-btn:active {
             background: #34495e;
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .control-btn.up { grid-column: 2; grid-row: 1; }
-        .control-btn.left { grid-column: 1; grid-row: 2; }
-        .control-btn.right { grid-column: 3; grid-row: 2; }
-        .control-btn.down { grid-column: 2; grid-row: 3; }
+        /* 右手模式（默认） */
+        .control-buttons.right-handed {
+            position: absolute;
+            right: 0;
+            grid-template-areas: 
+                ". up ."
+                "left . right"
+                ". down .";
+        }
+        
+        /* 左手模式 */
+        .control-buttons.left-handed {
+            position: absolute;
+            left: 0;
+            grid-template-areas: 
+                ". up ."
+                "left . right"
+                ". down .";
+        }
+
+        .control-btn.up { grid-area: up; }
+        .control-btn.down { grid-area: down; }
+        .control-btn.left { grid-area: left; }
+        .control-btn.right { grid-area: right; }
 
         @media (max-width: 500px) {
-            #gameCanvas {
-                width: 320px;
-                height: 320px;
+            .controls-container {
+                width: 320px;  /* 与移动端游戏画布宽度相同 */
             }
-            .game-container {
-                padding: 10px;
+            .control-buttons {
+                grid-template-columns: repeat(3, 60px);
+                grid-template-rows: repeat(3, 60px);
+                gap: 8px;
+            }
+            
+            .control-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
             }
         }
 
@@ -111,16 +153,21 @@
             background: #219a52;
         }
 
-        /* 添加开关按钮样式 */
+        /* 修改开关按钮样式和速度控制样式 */
         .layout-switch {
-            position: fixed;
-            top: 10px;
-            right: 10px;
+            position: relative;
+            margin: 10px auto;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             color: #2c3e50;
-            font-size: 14px;
+            font-size: 16px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: fit-content;
         }
         
         .switch {
@@ -128,6 +175,7 @@
             display: inline-block;
             width: 50px;
             height: 24px;
+            margin-left: 10px;
         }
         
         .switch input {
@@ -168,52 +216,78 @@
             transform: translateX(26px);
         }
         
-        /* 添加控制按钮布局样式 */
-        .control-buttons.left-handed {
-            grid-template-columns: 60px 60px 60px;
-            grid-template-areas: 
-                ". up ."
-                "left . right"
-                ". down .";
+        .speed-control {
+            margin-left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .control-buttons.right-handed {
-            grid-template-columns: 60px 60px 60px;
-            grid-template-areas: 
-                ". up ."
-                "right . left"
-                ". down .";
+        .speed-btn, .slow-btn {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .speed-btn:hover, .slow-btn:hover {
+            background: #34495e;
+        }
+        
+        .speed-btn:disabled, .slow-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .speed-display {
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* 添加一个容器来控制按钮组的位置 */
+        .controls-container {
+            width: 320px;  /* 与游戏画布宽度相同 */
+            margin: 0 auto;
+            position: relative;
         }
     </style>
 </head>
 <body>
-    <!-- 添加开关按钮 -->
+    <div class="game-container">
+        <div class="score">
+            <span>分数：<span id="score">0</span></span>
+            <span class="high-score">最高分：<span id="highScore">0</span></span>
+        </div>
+        <canvas id="gameCanvas" width="320" height="320"></canvas>
+        <div class="controls">使用方向键或下方按钮控制蛇的移动</div>
+    </div>
+    
+    <!-- 添加开关按钮和速度控制 -->
     <div class="layout-switch">
-        <span>左手模式</span>
+        <span id="layoutText">右手模式</span>
         <label class="switch">
             <input type="checkbox" id="layoutToggle">
             <span class="slider"></span>
         </label>
-    </div>
-
-    <div class="game-container">
-        <div class="score">分数：<span id="score">0</span></div>
-        <canvas id="gameCanvas" width="320" height="320"></canvas>
-        <div class="controls">使用方向键或下方按钮控制蛇的移动</div>
-        
-        <!-- 添加游戏结束覆盖层 -->
-        <div class="game-over" id="gameOver">
-            <h2>游戏结束</h2>
-            <p>得分：<span id="finalScore">0</span></p>
-            <button class="restart-btn" onclick="restartGame()">重新开始</button>
+        <div class="speed-control">
+            <span>速度:</span>
+            <button class="slow-btn" id="slowBtn">减速</button>
+            <span class="speed-display" id="speedLevel">3</span>
+            <button class="speed-btn" id="speedBtn">加速</button>
         </div>
     </div>
     
-    <div class="control-buttons">
-        <button class="control-btn up">↑</button>
-        <button class="control-btn left">←</button>
-        <button class="control-btn right">→</button>
-        <button class="control-btn down">↓</button>
+    <div class="controls-container">
+        <div class="control-buttons">
+            <button class="control-btn up">↑</button>
+            <button class="control-btn left">←</button>
+            <button class="control-btn right">→</button>
+            <button class="control-btn down">↓</button>
+        </div>
     </div>
 
     <script>
@@ -237,6 +311,9 @@
         let score = 0;
         let gameSpeed = 100;
         let gameLoop;
+        let speedLevel = 3;  // 初始速度等级
+        let highScore = localStorage.getItem('snakeGameHighScore') || 0;
+        document.getElementById('highScore').textContent = highScore;
 
         // 只保留键盘控制
         document.addEventListener('keydown', handleKeyPress);
@@ -346,7 +423,7 @@
             
             // 检查是否吃到食物
             if (head.x === food.x && head.y === food.y) {
-                score += 10;
+                score += 1;
                 scoreElement.textContent = score;
                 generateFood();
             } else {
@@ -425,31 +502,33 @@
             // 撞墙
             if (snake[0].x < 0 || snake[0].x >= tileCount || 
                 snake[0].y < 0 || snake[0].y >= tileCount) {
-                showGameOver();
+                handleGameOver();
                 return true;
             }
             
             // 撞到自己
             for (let i = 1; i < snake.length; i++) {
                 if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-                    showGameOver();
+                    handleGameOver();
                     return true;
                 }
             }
             return false;
         }
 
-        function showGameOver() {
-            const gameOverDiv = document.getElementById('gameOver');
-            const finalScoreSpan = document.getElementById('finalScore');
-            finalScoreSpan.textContent = score;
-            gameOverDiv.style.display = 'block';
+        function handleGameOver() {
+            // 更新最高分
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('snakeGameHighScore', highScore);
+                document.getElementById('highScore').textContent = highScore;
+            }
             clearInterval(gameLoop);
+            // 1秒后自动重新开始
+            setTimeout(restartGame, 1000);
         }
 
         function restartGame() {
-            const gameOverDiv = document.getElementById('gameOver');
-            gameOverDiv.style.display = 'none';
             resetGame();
             startGame();
         }
@@ -461,6 +540,9 @@
             dy = 0;
             score = 0;
             scoreElement.textContent = score;
+            // 使用保存的速度
+            gameSpeed = 100 - speedLevel * 10;
+            updateSpeedButtons();
         }
 
         function startGame() {
@@ -471,25 +553,84 @@
         // 添加布局切换功能
         const layoutToggle = document.getElementById('layoutToggle');
         const controlButtons = document.querySelector('.control-buttons');
+        const layoutText = document.getElementById('layoutText');
         
         // 从本地存储加载上次的布局设置
         const savedLayout = localStorage.getItem('snakeGameLayout');
-        if (savedLayout === 'right') {
+        if (savedLayout === 'left') {
             layoutToggle.checked = true;
+            controlButtons.classList.add('left-handed');
+            layoutText.textContent = '左手模式';
+        } else {
+            // 默认为右手模式
             controlButtons.classList.add('right-handed');
+            layoutText.textContent = '右手模式';
         }
         
         layoutToggle.addEventListener('change', function() {
             if (this.checked) {
-                controlButtons.classList.remove('left-handed');
-                controlButtons.classList.add('right-handed');
-                localStorage.setItem('snakeGameLayout', 'right');
-            } else {
                 controlButtons.classList.remove('right-handed');
                 controlButtons.classList.add('left-handed');
                 localStorage.setItem('snakeGameLayout', 'left');
+                layoutText.textContent = '左手模式';
+            } else {
+                controlButtons.classList.remove('left-handed');
+                controlButtons.classList.add('right-handed');
+                localStorage.setItem('snakeGameLayout', 'right');
+                layoutText.textContent = '右手模式';
             }
         });
+
+        // 速度控制
+        const speedBtn = document.getElementById('speedBtn');
+        const slowBtn = document.getElementById('slowBtn');
+        const speedDisplay = document.getElementById('speedLevel');
+        
+        // 从本地存储加载上次的速度设置
+        const savedSpeed = localStorage.getItem('snakeGameSpeed');
+        if (savedSpeed) {
+            speedLevel = parseInt(savedSpeed);
+            speedDisplay.textContent = speedLevel;
+            gameSpeed = 100 - speedLevel * 10;
+            updateSpeedButtons();
+        }
+        
+        speedBtn.addEventListener('click', function() {
+            if (speedLevel < 8) {
+                speedLevel++;
+                updateSpeed();
+            }
+        });
+        
+        slowBtn.addEventListener('click', function() {
+            if (speedLevel > 1) {
+                speedLevel--;
+                updateSpeed();
+            }
+        });
+        
+        function updateSpeed() {
+            // 更新显示
+            speedDisplay.textContent = speedLevel;
+            // 更新游戏速度
+            gameSpeed = 100 - speedLevel * 10;
+            // 保存速度设置到本地存储
+            localStorage.setItem('snakeGameSpeed', speedLevel.toString());
+            // 更新按钮状态
+            updateSpeedButtons();
+            // 重启游戏循环以应用新速度
+            if (gameLoop) {
+                clearInterval(gameLoop);
+                gameLoop = setInterval(drawGame, gameSpeed);
+            }
+        }
+        
+        function updateSpeedButtons() {
+            // 更新加速按钮状态
+            speedBtn.disabled = speedLevel >= 8;
+            // 更新减速按钮状态
+            slowBtn.disabled = speedLevel <= 1;
+        }
 
         // 直接开始游戏
         startGame();
